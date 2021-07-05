@@ -4,7 +4,7 @@
 //文字とその文字数を記録
 typedef struct {
 	int letter_counter;
-	char letter[128];
+    char letter[128];
 }node_t;
 //バッファ初期化
 void init_buf(node_t* buffer);
@@ -15,4 +15,5 @@ void  add_letter_buf(node_t* buffer, char c);
 //デバック用
 //バッファの値をすべて表示する
 void view_buf(node_t* buffer);
+
 #endif

@@ -3,9 +3,9 @@
 #include "func.h"
 
 int main()
-{
+{	
 	//ファイル名
-	const char *filename = "TEST-PAC/TEST0.BIN";
+	const char *filename = "TEST-PAC/TEST02.bin";
 	//ファイル読み込み
 	FILE* current_fp;
 	FILE* next_fp;
@@ -16,32 +16,32 @@ int main()
 		printf("fileオープンに失敗しました!");
 		exit(1);
 	}
+	//リスト定義
 	std::vector<node_t> list;
 	node_t buffer;
 	buffer.letter_counter = 0;
 	buffer.letter[127];
-	for (int i = 0; i < (sizeof(buffer.letter) / sizeof(buffer.letter[0])); i++) {
-		buffer.letter[i] = '\0';
-	}
+	init_buf(&buffer);
 	//ひとつ前の文字と今の文字が連続していたか
 	bool continuous = false;
 	//今の文字と次の文字
-	char current_letter = '0';
-	char next_letter;
+	int current_letter = -1;
+	int next_letter;
 	//１つ先を参照する
 	next_letter = fgetc(next_fp);
-	while (current_letter != EOF) {
-		next_letter = fgetc(next_fp);
+	//圧縮する文字数分ループ
+	while (next_letter != EOF){
+	    next_letter = fgetc(next_fp);
 		current_letter = fgetc(current_fp);
-		printf("current = %x　", current_letter);
-		printf("next = %x　", next_letter);
+		//printf("current = %d　", (unsigned char)current_letter);
+		//printf("next = %d　", (unsigned char)next_letter);
 		if (current_letter == next_letter) {
 
 			if (continuous) {
 				increase_counter_buf(&buffer);
 			}
 			else {
-				if (buffer.letter[0] != '\0') {
+				if (buffer.letter[0]!=-1) {
 					list.push_back(buffer);
 					init_buf(&buffer);
 				}
@@ -62,20 +62,38 @@ int main()
 			}
 			continuous = false;
 		}
-		view_buf(&buffer);
+		//view_buf(&buffer);
 	}
 	fclose(current_fp);
 	fclose(next_fp);
-	if (buffer.letter[0] != '\0') list.push_back(buffer);
+	if (buffer.letter_counter >= 1) list.push_back(buffer);
 
-	//圧縮後
+	//圧縮後表示
 	printf("リスト\n");
 	for (auto a : list) {
 		for (int i = 0; i < (sizeof(a.letter) / sizeof(a.letter[0])); i++) {
-			if(a.letter[i]!='\0')printf("%x", a.letter[i]);
+			//if(a.letter[i]!=-1)
+				//printf("%c", (unsigned char)a.letter[i]);
 		}
-		printf(" %d個", a.letter_counter);
+		//printf(" %d個", a.letter_counter);
 		printf("\n");
 	}
+	//圧縮した文字をファイルに書き込む
+	FILE* outputfile;
+	fopen_s(&outputfile, "output.bin","wb"); // ファイルを書き込み用にオープン(開く)
+	if (outputfile == NULL) {          // オープンに失敗した場合
+		printf("cannot open\n");         // エラーメッセージを出して
+		exit(1);                         // 異常終了
+	}
+	for (auto a : list) {
+		for (int i = 0; i < (sizeof(a.letter) / sizeof(a.letter[0])); i++) {
+			if (a.letter[i] != -1)
+				fputc((unsigned char)a.letter[i], outputfile);
+		}
+		fputc((unsigned char)a.letter_counter, outputfile);
+		//fputc(' ', outputfile);
+	}
+
+	fclose(outputfile);
 	return 0;
 }

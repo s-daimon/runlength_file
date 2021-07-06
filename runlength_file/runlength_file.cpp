@@ -5,7 +5,7 @@
 int main()
 {	
 	//ファイル名
-	const char *filename = "TEST-PAC/TEST02.bin";
+	const char *filename = "TEST-PAC/TEST02.BIN";
 	//ファイル読み込み
 	FILE* current_fp;
 	FILE* next_fp;
@@ -19,7 +19,7 @@ int main()
 	//リスト定義
 	std::vector<node_t> list;
 	node_t buffer;
-	buffer.letter_counter = 0;
+	buffer.letter_counter =0;
 	buffer.letter[127];
 	init_buf(&buffer);
 	//ひとつ前の文字と今の文字が連続していたか
@@ -33,7 +33,7 @@ int main()
 	while (next_letter != EOF){
 	    next_letter = fgetc(next_fp);
 		current_letter = fgetc(current_fp);
-		//printf("current = %d　", (unsigned char)current_letter);
+		printf("current = %d　", (unsigned char)current_letter);
 		//printf("next = %d　", (unsigned char)next_letter);
 		if (current_letter == next_letter) {
 
@@ -58,15 +58,15 @@ int main()
 			}
 			else {
 				add_letter_buf(&buffer, current_letter);
-				increase_counter_buf(&buffer);
+				decrease_counter_buf(&buffer);
 			}
 			continuous = false;
 		}
-		//view_buf(&buffer);
+		view_buf(&buffer);
 	}
 	fclose(current_fp);
 	fclose(next_fp);
-	if (buffer.letter_counter >= 1) list.push_back(buffer);
+	if ((buffer.letter_counter) >= 1 ||(buffer.letter_counter) <= -1) list.push_back(buffer);
 
 	//圧縮後表示
 	printf("リスト\n");
@@ -86,12 +86,14 @@ int main()
 		exit(1);                         // 異常終了
 	}
 	for (auto a : list) {
+		fputc(a.letter_counter, outputfile);
+		printf("counter = %d\n", a.letter_counter);
+		//fputc(' ', outputfile);
 		for (int i = 0; i < (sizeof(a.letter) / sizeof(a.letter[0])); i++) {
 			if (a.letter[i] != -1)
-				fputc((unsigned char)a.letter[i], outputfile);
+				fputc((char)a.letter[i], outputfile);
 		}
-		fputc((unsigned char)a.letter_counter, outputfile);
-		//fputc(' ', outputfile);
+
 	}
 
 	fclose(outputfile);

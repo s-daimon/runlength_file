@@ -10,6 +10,8 @@ typedef struct {
 void init_buf(node_t* buffer);
 //バッファのカウンタを１加算
 void increase_counter_buf(node_t* buffer);
+//バッファのカウンタを１減算
+void decrease_counter_buf(node_t* buffer);
 //バッファに文字追加
 void  add_letter_buf(node_t* buffer, char c);
 //デバック用

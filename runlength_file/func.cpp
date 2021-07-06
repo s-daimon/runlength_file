@@ -12,6 +12,10 @@ void init_buf(node_t* buffer) {
 void increase_counter_buf(node_t* buffer) {
 	buffer->letter_counter++;
 }
+//バッファの文字カウントに１減算
+void decrease_counter_buf(node_t* buffer) {
+	buffer->letter_counter--;
+}
 //バッファに格納する文字を一つ増やす
 void add_letter_buf(node_t* buffer, char c) {
 	for (int i = 0; i < (sizeof(buffer->letter) / sizeof(buffer->letter[0])); i++) {
